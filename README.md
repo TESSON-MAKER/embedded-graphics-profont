@@ -51,7 +51,7 @@ See [TOOLS.md](TOOLS.md) for complete font generation workflow.
 
 ## API Overview
 
-| | |
+| -- | -- |
 | `Font::new(lookup_table, data, ascii_begin, ascii_end, max_height, proportional)` | Create font |
 | `font.measure_str(text, tracking)` | Get text width in pixels |
 | `text.with_anchor(anchor)` | Set anchor point |
