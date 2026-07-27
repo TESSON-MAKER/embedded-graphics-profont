@@ -1,0 +1,12 @@
+[package]
+name = "embedded-graphics-profont"
+version = "0.1.0"
+edition = "2021"
+authors = ["TESSON-MAKER"]
+description = "Bitmap font rendering for embedded-graphics with anchor and tracking support"
+readme = "README.md"
+repository = "https://github.com/TESSON-MAKER/ili9488-stm32-rs"
+license = "MIT"
+
+[dependencies]
+embedded-graphics = "0.8.2"
