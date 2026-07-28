@@ -7,6 +7,8 @@
 
 Bitmap font rendering for `embedded-graphics` with text anchoring and tracking support.
 
+![Demo](demo.png)
+
 ## Quick Start
 
 ```rust

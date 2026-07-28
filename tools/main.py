@@ -79,6 +79,16 @@ def main() -> None:
             raw_msb = get_value(table, NUMBER_OF_METADATA_ENTRIES + i + 2)
             char_location = ((raw_msb << 8) | raw_lsb) - NUMBER_OF_METADATA_ENTRIES - number_of_characters * CHAR_HEADER_LEN
 
+            # Correction for space character (ASCII 32): calculate actual width from data size
+            if char_code == 32:  # Space character
+                if i + CHAR_HEADER_LEN < number_of_characters * CHAR_HEADER_LEN:
+                    next_raw_lsb = get_value(table, NUMBER_OF_METADATA_ENTRIES + i + CHAR_HEADER_LEN + 1)
+                    next_raw_msb = get_value(table, NUMBER_OF_METADATA_ENTRIES + i + CHAR_HEADER_LEN + 2)
+                    next_char_location = ((next_raw_msb << 8) | next_raw_lsb) - NUMBER_OF_METADATA_ENTRIES - number_of_characters * CHAR_HEADER_LEN
+                    space_data_bytes = next_char_location - char_location
+                    # Calculate actual width from data: width = (data_bytes / max_height) * 8
+                    char_width = (space_data_bytes * 8) // max_height
+
             f.write("    GlyphEntry { width: 0x%02X, offset: 0x%04X }, // Character: %s (ASCII %d)\n" %
                         (char_width, char_location, chr(char_code), char_code))
         f.write("];\n")
