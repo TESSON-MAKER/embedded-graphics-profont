@@ -5,7 +5,7 @@
   <a href="LICENSE-MIT"><img src="https://img.shields.io/badge/license-MIT%2FApache--2.0-blue.svg" alt="License" height="20"></a>
 </p>
 
-Bitmap font rendering for `embedded-graphics` with text anchoring and tracking support.
+Bitmap font rendering for [`embedded-graphics`](https://crates.io/crates/embedded-graphics) with text anchoring and tracking support.
 
 ![Demo](demo.png)
 
