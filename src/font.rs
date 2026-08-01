@@ -127,6 +127,7 @@ pub struct GlyphEntry {
 /// - `position`: Position for the anchor point
 /// - `font`: Font to use for rendering
 /// - `color`: Pixel color for the text
+/// - `background_color`: Optional background color
 /// - `anchor`: Which point of the text bounds the position refers to
 /// - `tracking`: Extra pixel spacing between characters
 ///
@@ -151,6 +152,7 @@ pub struct Text<'a, C> {
     position: Point,
     font: &'a Font,
     color: C,
+    background_color: Option<C>,
     anchor: Anchor,
     tracking: i32,
 }
@@ -176,6 +178,7 @@ pub struct Character<'a, C> {
     position: Point,
     font: &'a Font,
     color: C,
+    background_color: Option<C>,
     anchor: Anchor,
 }
 
@@ -302,9 +305,27 @@ where
             position,
             font,
             color,
+            background_color: None,
             anchor: Anchor::TopLeft,
             tracking: 0,
         }
+    }
+
+    /// Set an optional background color for the text.
+    ///
+    /// # Arguments
+    /// 
+    /// * `color` - Pixel color for the background
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let text = Text::new("Hello", Point::new(0, 0), &font, color)
+    ///     .with_background_color(Rgb565::BLACK);
+    /// ```
+    pub fn with_background_color(mut self, color: C) -> Self { 
+        self.background_color = Some(color);
+        self
     }
 
     /// Set the spacing between characters in pixels.
@@ -355,8 +376,19 @@ where
             position,
             font,
             color,
+            background_color: None,
             anchor: Anchor::TopLeft,
         }
+    }
+
+    /// Set an optional background color for the character.
+    ///
+    /// # Arguments
+    /// 
+    /// * `color` - Pixel color for the background
+    pub fn with_background_color(mut self, color: C) -> Self {
+        self.background_color = Some(color);
+        self
     }
 }
 
@@ -426,6 +458,7 @@ where
             Point::new(x, y),
             self.font,
             self.color,
+            self.background_color,
             self.tracking,
         )?;
 
@@ -489,7 +522,14 @@ where
             ),
         };
 
-        renderer::draw_char(target, self.ch, Point::new(x, y), self.font, self.color)?;
+        renderer::draw_char(
+            target, 
+            self.ch, 
+            Point::new(x, y), 
+            self.font, 
+            self.color, 
+            self.background_color,
+        )?;
 
         Ok(())
     }

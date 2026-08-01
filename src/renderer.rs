@@ -43,6 +43,7 @@ pub fn draw_char<D, C>(
     position: Point,
     font: &Font,
     text_color: C,
+    background_color: Option<C>,
 ) -> Result<u32, D::Error>
 where
     D: DrawTarget<Color = C>,
@@ -61,11 +62,12 @@ where
                 let bit_index = 7 - (col % 8);
                 let is_set = (glyph_bytes[byte_index] & (1 << bit_index)) != 0;
 
+                let pixel_point = Point::new(position.x + col as i32, position.y + row as i32);
+
                 if is_set {
-                    Some(Pixel(
-                        Point::new(position.x + col as i32, position.y + row as i32),
-                        text_color,
-                    ))
+                    Some(Pixel(pixel_point, text_color))
+                } else if let Some(bg_color) = background_color {
+                    Some(Pixel(pixel_point, bg_color))
                 } else {
                     None
                 }
@@ -135,6 +137,7 @@ pub fn draw_str<D, C>(
     position: Point,
     font: &Font,
     text_color: C,
+    background_color: Option<C>,
     tracking: i32,
 ) -> Result<Point, D::Error>
 where
@@ -144,7 +147,7 @@ where
     let mut cursor = position;
 
     for c in text.chars() {
-        let width = draw_char(target, c, cursor, font, text_color)?;
+        let width = draw_char(target, c, cursor, font, text_color, background_color)?;
         cursor.x += width as i32 + tracking;
     }
 
