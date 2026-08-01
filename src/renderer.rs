@@ -43,7 +43,7 @@ pub fn draw_char<D, C>(
     position: Point,
     font: &Font,
     text_color: C,
-    background_color: Option<C>,
+    background_color: Option<C>
 ) -> Result<u32, D::Error>
 where
     D: DrawTarget<Color = C>,
@@ -54,8 +54,7 @@ where
         let glyph_bytes = font.glyph_data(entry);
 
         let pixels = (0..font.max_height).flat_map(|row| {
-            let actual_row = font.max_height as usize - 1 - row as usize;
-            let row_offset = actual_row * bytes_per_row;
+            let row_offset = row as usize * bytes_per_row;
 
             (0..entry.width).filter_map(move |col| {
                 let byte_index = row_offset + (col as usize / 8);
