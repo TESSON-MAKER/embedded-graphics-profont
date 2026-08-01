@@ -49,6 +49,8 @@ where
     D: DrawTarget<Color = C>,
     C: PixelColor,
 {
+    let bounds = target.bounding_box();
+    
     if let Some(entry) = font.get_glyph(ch) {
         let bytes_per_row = (entry.width as usize + 7) / 8;
         let glyph_bytes = font.glyph_data(entry);
@@ -62,6 +64,11 @@ where
                 let is_set = (glyph_bytes[byte_index] & (1 << bit_index)) != 0;
 
                 let pixel_point = Point::new(position.x + col as i32, position.y + row as i32);
+
+                // Check if the pixel is within the bounds of the target
+                if !bounds.contains(pixel_point) {
+                    return None;
+                }
 
                 if is_set {
                     Some(Pixel(pixel_point, text_color))
