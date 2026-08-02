@@ -13,6 +13,7 @@ Bitmap font rendering for [`embedded-graphics`](https://crates.io/crates/embedde
 
 ```rust
 use embedded_graphics::{
+    geometry::{AnchorPoint, Point, Size},
     pixelcolor::Rgb666,
     prelude::*,
 };
