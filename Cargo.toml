@@ -1,6 +1,6 @@
 [package]
 name = "embedded-graphics-profont"
-version = "0.5.0"
+version = "0.5.1"
 edition = "2024"
 authors = ["TESSON-MAKER"]
 description = "Bitmap font rendering for embedded-graphics with anchor and tracking support"

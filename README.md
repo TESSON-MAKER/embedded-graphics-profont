@@ -17,7 +17,7 @@ use embedded_graphics::{
     pixelcolor::Rgb666,
     prelude::*,
 };
-use embedded_graphics_profont::{Text, Anchor, WithAnchor};
+use embedded_graphics_profont::{Text, WithAnchor};
 
 mod fonts;
 use fonts::FONT;
