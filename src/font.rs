@@ -1,49 +1,11 @@
 use embedded_graphics::{
     draw_target::DrawTarget,
-    geometry::Point,
+    geometry::{AnchorPoint, Point},
     pixelcolor::PixelColor,
     Drawable,
 };
 
 use crate::renderer;
-
-/// Text anchor point for positioning.
-///
-/// Defines which point of the text bounding box should be placed at the given position.
-/// This allows precise control over text alignment without calculating dimensions manually.
-///
-/// # Examples
-///
-/// - `TopLeft`: Position is at top-left corner (default)
-/// - `MiddleCenter`: Position is at the center of the text
-/// - `BottomRight`: Position is at bottom-right corner
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Anchor {
-    /// Position text so the given point is at its top-left corner.
-    TopLeft,
-    /// Position text so the given point is at its top-center.
-    TopCenter,
-    /// Position text so the given point is at its top-right corner.
-    TopRight,
-    /// Position text so the given point is at its middle-left.
-    MiddleLeft,
-    /// Position text so the given point is at its center.
-    MiddleCenter,
-    /// Position text so the given point is at its middle-right.
-    MiddleRight,
-    /// Position text so the given point is at its bottom-left corner.
-    BottomLeft,
-    /// Position text so the given point is at its bottom-center.
-    BottomCenter,
-    /// Position text so the given point is at its bottom-right corner.
-    BottomRight,
-}
-
-impl Default for Anchor {
-    fn default() -> Self {
-        Anchor::TopLeft
-    }
-}
 
 /// Trait for types that support anchoring.
 ///
@@ -52,15 +14,15 @@ impl Default for Anchor {
 /// # Examples
 ///
 /// ```ignore
-/// use embedded_graphics_profont::{Text, Anchor, WithAnchor};
-/// use embedded_graphics::geometry::Point;
+/// use embedded_graphics_profont::{Text, WithAnchor};
+/// use embedded_graphics::geometry::{Point, AnchorPoint};
 ///
 /// let text = Text::new("Hello", Point::new(100, 100), &font, color)
-///     .with_anchor(Anchor::MiddleCenter);
+///     .with_anchor(AnchorPoint::Center);
 /// ```
 pub trait WithAnchor: Sized {
     /// Set the anchor point for positioning this object.
-    fn with_anchor(self, anchor: Anchor) -> Self;
+    fn with_anchor(self, anchor: AnchorPoint) -> Self;
 }
 
 /// A bitmap font definition.
@@ -134,8 +96,8 @@ pub struct GlyphEntry {
 /// # Examples
 ///
 /// ```ignore
-/// use embedded_graphics::geometry::Point;
-/// use embedded_graphics_profont::{Text, Anchor, WithAnchor};
+/// use embedded_graphics::geometry::{Point, AnchorPoint};
+/// use embedded_graphics_profont::{Text, WithAnchor};
 ///
 /// // Simple left-aligned text
 /// let text = Text::new("Hello", Point::new(0, 0), &font, Rgb565::WHITE);
@@ -143,7 +105,7 @@ pub struct GlyphEntry {
 ///
 /// // Centered text with letter spacing
 /// let text = Text::new("Spaced", Point::new(64, 32), &font, color)
-///     .with_anchor(Anchor::MiddleCenter)
+///     .with_anchor(AnchorPoint::Center)
 ///     .with_tracking(2);
 /// target.draw(&text)?;
 /// ```
@@ -153,7 +115,7 @@ pub struct Text<'a, C> {
     font: &'a Font,
     color: C,
     background_color: Option<C>,
-    anchor: Anchor,
+    anchor: AnchorPoint,
     tracking: i32,
 }
 
@@ -166,11 +128,11 @@ pub struct Text<'a, C> {
 /// # Examples
 ///
 /// ```ignore
-/// use embedded_graphics_profont::{Character, Anchor, WithAnchor};
-/// use embedded_graphics::geometry::Point;
+/// use embedded_graphics_profont::{Character, WithAnchor};
+/// use embedded_graphics::geometry::{Point, AnchorPoint};
 ///
 /// let ch = Character::new('A', Point::new(10, 10), &font, color)
-///     .with_anchor(Anchor::MiddleCenter);
+///     .with_anchor(AnchorPoint::Center);
 /// target.draw(&ch)?;
 /// ```
 pub struct Character<'a, C> {
@@ -179,7 +141,7 @@ pub struct Character<'a, C> {
     font: &'a Font,
     color: C,
     background_color: Option<C>,
-    anchor: Anchor,
+    anchor: AnchorPoint,
 }
 
 impl Font {
@@ -306,7 +268,7 @@ where
             font,
             color,
             background_color: None,
-            anchor: Anchor::TopLeft,
+            anchor: AnchorPoint::TopLeft,
             tracking: 0,
         }
     }
@@ -347,7 +309,7 @@ where
 }
 
 impl<'a, C: PixelColor> WithAnchor for Text<'a, C> {
-    fn with_anchor(mut self, anchor: Anchor) -> Self {
+    fn with_anchor(mut self, anchor: AnchorPoint) -> Self {
         self.anchor = anchor;
         self
     }
@@ -377,7 +339,7 @@ where
             font,
             color,
             background_color: None,
-            anchor: Anchor::TopLeft,
+            anchor: AnchorPoint::TopLeft,
         }
     }
 
@@ -393,7 +355,7 @@ where
 }
 
 impl<'a, C: PixelColor> WithAnchor for Character<'a, C> {
-    fn with_anchor(mut self, anchor: Anchor) -> Self {
+    fn with_anchor(mut self, anchor: AnchorPoint) -> Self {
         self.anchor = anchor;
         self
     }
@@ -414,39 +376,39 @@ where
         let text_height = self.font.max_height as i32;
 
         let (x, y) = match self.anchor {
-            Anchor::TopLeft => (
+            AnchorPoint::TopLeft => (
                 self.position.x, 
                 self.position.y
             ),
-            Anchor::TopCenter => (
+            AnchorPoint::TopCenter => (
                 self.position.x - (text_width / 2), 
                 self.position.y
             ),
-            Anchor::TopRight => (
+            AnchorPoint::TopRight => (
                 self.position.x - text_width, 
                 self.position.y
             ),
-            Anchor::MiddleLeft => (
+            AnchorPoint::CenterLeft => (
                 self.position.x, 
                 self.position.y - (text_height / 2)
             ),
-            Anchor::MiddleCenter => (
+            AnchorPoint::Center => (
                 self.position.x - (text_width / 2),
                 self.position.y - (text_height / 2),
             ),
-            Anchor::MiddleRight => (
+            AnchorPoint::CenterRight => (
                 self.position.x - text_width,
                 self.position.y - (text_height / 2),
             ),
-            Anchor::BottomLeft => (
+            AnchorPoint::BottomLeft => (
                 self.position.x, 
                 self.position.y - text_height
             ),
-            Anchor::BottomCenter => (
+            AnchorPoint::BottomCenter => (
                 self.position.x - (text_width / 2), 
                 self.position.y - text_height
             ),
-            Anchor::BottomRight => (
+            AnchorPoint::BottomRight => (
                 self.position.x - text_width, 
                 self.position.y - text_height
             ),
@@ -484,39 +446,39 @@ where
         let char_height = self.font.max_height as i32;
 
         let (x, y) = match self.anchor {
-            Anchor::TopLeft => (
+            AnchorPoint::TopLeft => (
                 self.position.x, 
                 self.position.y
             ),
-            Anchor::TopCenter => (
+            AnchorPoint::TopCenter => (
                 self.position.x - (char_width / 2), 
                 self.position.y
             ),
-            Anchor::TopRight => (
+            AnchorPoint::TopRight => (
                 self.position.x - char_width, 
                 self.position.y
             ),
-            Anchor::MiddleLeft => (
+            AnchorPoint::CenterLeft => (
                 self.position.x, 
                 self.position.y - (char_height / 2)
             ),
-            Anchor::MiddleCenter => (
+            AnchorPoint::Center => (
                 self.position.x - (char_width / 2),
                 self.position.y - (char_height / 2),
             ),
-            Anchor::MiddleRight => (
+            AnchorPoint::CenterRight => (
                 self.position.x - char_width,
                 self.position.y - (char_height / 2),
             ),
-            Anchor::BottomLeft => (
+            AnchorPoint::BottomLeft => (
                 self.position.x, 
                 self.position.y - char_height
             ),
-            Anchor::BottomCenter => (
+            AnchorPoint::BottomCenter => (
                 self.position.x - (char_width / 2),
                 self.position.y - char_height,
             ),
-            Anchor::BottomRight => (
+            AnchorPoint::BottomRight => (
                 self.position.x - char_width, 
                 self.position.y - char_height
             ),

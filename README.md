@@ -27,7 +27,7 @@ display.draw(&text).ok();
 
 // With anchoring and spacing
 let text = Text::new("Centered", Point::new(160, 120), &FONT, Rgb666::BLACK)
-    .with_anchor(Anchor::MiddleCenter)
+    .with_anchor(AnchorPoint::Center)
     .with_tracking(2);
 display.draw(&text).ok();
 ```
@@ -36,7 +36,7 @@ display.draw(&text).ok();
 
 - `no_std` compatible
 - Bitmap fonts (monospace & proportional)
-- **9-point text anchoring** (TopLeft, TopCenter, TopRight, MiddleLeft, MiddleCenter, MiddleRight, BottomLeft, BottomCenter, BottomRight)
+- **9-point text anchoring** (TopLeft, TopCenter, TopRight, CenterLeft, Center, CenterRight, BottomLeft, BottomCenter, BottomRight)
 - **Character tracking** (letter spacing)
 - Transparent rendering (only font pixels drawn)
 - Text measurement via `font.measure_str()`
